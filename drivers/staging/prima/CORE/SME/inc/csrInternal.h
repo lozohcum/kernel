@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -93,11 +93,6 @@
     (sessionId < CSR_ROAM_SESSION_MAX) ? \
      (&(pMac)->roam.roamSession[(sessionId)]) :\
      NULL \
-)
-
-#define CSR_IS_SELECT_5GHZ_MARGIN( pMac ) \
-( \
-   (((pMac)->roam.configParam.nSelect5GHzMargin)?eANI_BOOLEAN_TRUE:eANI_BOOLEAN_FALSE) \
 )
 
 #if  defined (WLAN_FEATURE_VOWIFI_11R) || defined (FEATURE_WLAN_CCX) || defined(FEATURE_WLAN_LFR)
@@ -668,7 +663,6 @@ typedef struct tagCsrConfig
      */
     tANI_BOOLEAN enableHeartBeatOffload;
     tANI_U8 isAmsduSupportInAMPDU;
-    tANI_U8 nSelect5GHzMargin;
 }tCsrConfig;
 
 typedef struct tagCsrChannelPowerInfo
@@ -779,9 +773,6 @@ typedef struct tagCsrScanStruct
     tDblLinkList scanCmdPendingList;
 #endif
     tCsrChannel occupiedChannels;   //This includes all channels on which candidate APs are found
-    tANI_S8     inScanResultBestAPRssi;
-
-    csrScanCompleteCallback callback11dScanDone;
 }tCsrScanStruct;
 
 #ifdef FEATURE_WLAN_TDLS_INTERNAL
@@ -1011,7 +1002,6 @@ typedef struct tagCsrRoamStruct
     tANI_U8        RoamRssiDiff;
     tANI_BOOLEAN   isWESModeEnabled;
 #endif
-    tANI_U32 deauthRspStatus;
 }tCsrRoamStruct;
 
 
@@ -1140,7 +1130,6 @@ void csrScanSuspendIMPS( tpAniSirGlobal pMac );
 void csrScanResumeIMPS( tpAniSirGlobal pMac );
 
 eHalStatus csrInitGetChannels(tpAniSirGlobal pMac);
-eHalStatus csrScanFilter11dResult(tpAniSirGlobal pMac);
 
 eHalStatus csrSetModifyProfileFields(tpAniSirGlobal pMac, tANI_U32 sessionId,
                                      tCsrRoamModifyProfileFields *pModifyProfileFields);
@@ -1306,14 +1295,6 @@ eHalStatus csrMsgProcessor( tpAniSirGlobal pMac,  void *pMsgBuf );
     \return eHalStatus
   -------------------------------------------------------------------------------*/
 eHalStatus csrOpen(tpAniSirGlobal pMac);
-
-/* ---------------------------------------------------------------------------
-    \fn csrInitChannels
-    \brief This function must be called to initialize CSR channel lists
-    \return eHalStatus
-  -------------------------------------------------------------------------------*/
-eHalStatus csrInitChannels(tpAniSirGlobal pMac);
-
 /* ---------------------------------------------------------------------------
     \fn csrClose
     \brief To close down CSR module. There should not be any API call into CSR after calling this function.
